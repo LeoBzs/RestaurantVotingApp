@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,9 +20,17 @@ public class Usuario implements UserDetails {
 	private String nome;
 	private String email;
 	private String senha;
+	private Integer vote;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private final List<Perfil> perfis = new ArrayList<>();
+
+	@Column(name = "status")
+	private StatusEnumVoter status = StatusEnumVoter.CAN_VOTE ;
+
+	public enum StatusEnumVoter {
+		CAN_VOTE, ALREADY_VOTED, INVALID_VOTE_COUNT
+	}
 
 	@Override
 	public int hashCode() {
@@ -46,11 +50,17 @@ public class Usuario implements UserDetails {
 			return false;
 		Usuario other = (Usuario) obj;
 		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+			return other.id == null;
+		} else return id.equals(other.id);
+	}
+
+	@Scheduled(cron = "0 0 12 1/1 * ? *")
+	public StatusEnumVoter voteManager(){
+		if(!this.getVote().equals(1) || this.getVote() < 2) {
+			this.setVote(1);
+			return StatusEnumVoter.CAN_VOTE;
+		}
+		return StatusEnumVoter.INVALID_VOTE_COUNT;
 	}
 
 	public Long getId() {
@@ -83,6 +93,22 @@ public class Usuario implements UserDetails {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+
+	public Integer getVote() {
+		return vote;
+	}
+
+	public void setVote(Integer vote) {
+		this.vote = vote;
+	}
+
+	public StatusEnumVoter getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusEnumVoter status) {
+		this.status = status;
 	}
 
 	@Override
