@@ -21,14 +21,16 @@ public interface RestaurantService {
 
     Optional<Restaurant> canBeVotedNextDay(Long Id);
 
-    boolean userIsAllowedToVote(String email);
-
     Iterable<Restaurant> findAll();
-
-    Stream<Restaurant> topPicks();
 
     List<Usuario> usersWhoVotedList();
 
+    Stream<Restaurant> topPicks();
+
     Stream<Restaurant> mostVoted();
+
+    boolean userIsAllowedToVote(String email);
+
+    boolean restaurantIsValid(Long Id);
 
 }

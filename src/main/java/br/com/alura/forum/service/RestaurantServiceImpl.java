@@ -78,6 +78,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         return false;
     }
 
+    @Override
     public boolean restaurantIsValid(Long Id){
         if (restaurantRepository.findById(Id).isPresent()) {
             boolean hasWon = restaurantRepository.findById(Id).get().getStatus().equals(WINNER);

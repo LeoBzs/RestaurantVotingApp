@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import static br.com.alura.forum.modelo.StatusVote.WINNER;
-
 @Entity
 public class Restaurant {
 
@@ -19,6 +17,8 @@ public class Restaurant {
     private Long id;
     private String name;
     private String description;
+    private String address;
+    private String website;
     private Integer votes;
     private LocalDateTime dataCriacao = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
@@ -98,6 +98,22 @@ public class Restaurant {
 
     public void setStatus(StatusVote status) {
         this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     public Usuario getAutor() {
