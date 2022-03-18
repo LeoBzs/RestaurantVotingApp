@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -29,7 +28,7 @@ public class Usuario implements UserDetails {
 	private StatusEnumVoter status = StatusEnumVoter.CAN_VOTE ;
 
 	public enum StatusEnumVoter {
-		CAN_VOTE, ALREADY_VOTED, INVALID_VOTE_COUNT
+		CAN_VOTE, ALREADY_VOTED
 	}
 
 	@Override
@@ -52,15 +51,6 @@ public class Usuario implements UserDetails {
 		if (id == null) {
 			return other.id == null;
 		} else return id.equals(other.id);
-	}
-
-	@Scheduled(cron = "0 0 12 1/1 * ? *")
-	public StatusEnumVoter voteManager(){
-		if(!this.getVote().equals(1) || this.getVote() < 2) {
-			this.setVote(1);
-			return StatusEnumVoter.CAN_VOTE;
-		}
-		return StatusEnumVoter.INVALID_VOTE_COUNT;
 	}
 
 	public Long getId() {
