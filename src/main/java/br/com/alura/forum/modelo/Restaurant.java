@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import static br.com.alura.forum.modelo.StatusVote.WINNER;
+
 @Entity
 public class Restaurant {
 
@@ -33,7 +35,7 @@ public class Restaurant {
     }
 
     public Integer addVote(Integer number){
-        return this.getVotes()+number;
+        return this.getVotes() + number;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package br.com.alura.forum.scheduled;
 
+import br.com.alura.forum.repository.RestaurantRepository;
 import br.com.alura.forum.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+import static br.com.alura.forum.modelo.StatusVote.VALID;
+import static br.com.alura.forum.modelo.StatusVote.WINNER;
 import static br.com.alura.forum.modelo.Usuario.StatusEnumVoter.ALREADY_VOTED;
 import static br.com.alura.forum.modelo.Usuario.StatusEnumVoter.CAN_VOTE;
 
@@ -15,10 +18,12 @@ import static br.com.alura.forum.modelo.Usuario.StatusEnumVoter.CAN_VOTE;
 @EnableScheduling
 public class SchedulerService {
     private final UsuarioRepository usuarioRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @Autowired
-    public SchedulerService(UsuarioRepository usuarioRepository) {
+    public SchedulerService(UsuarioRepository usuarioRepository, RestaurantRepository restaurantRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     //para teste, roda cada 4 minutos: @Scheduled(fixedRate = 240000)
@@ -37,4 +42,20 @@ public class SchedulerService {
                 })
                 .collect(Collectors.toList());
     }
+
+    //re-valida o restaurante para ser votado, toda segunda, resetando o status do restaurante:
+    @Scheduled(cron = "0 0 0 * * MON")
+    public void restaurantValidityManager(){
+        restaurantRepository.findAll()
+                .stream()
+                .filter(restaurant ->
+                        restaurant.getStatus().equals(WINNER)
+                )
+                .map(restaurant -> {
+                   restaurant.setStatus(VALID);
+                    return restaurantRepository.save(restaurant);
+                })
+                .collect(Collectors.toList());
+    }
+
 }

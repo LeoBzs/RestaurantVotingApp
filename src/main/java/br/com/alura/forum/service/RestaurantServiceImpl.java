@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static br.com.alura.forum.modelo.StatusVote.VALID;
+import static br.com.alura.forum.modelo.StatusVote.WINNER;
 import static br.com.alura.forum.modelo.Usuario.StatusEnumVoter.ALREADY_VOTED;
 
 @Service
@@ -77,6 +78,14 @@ public class RestaurantServiceImpl implements RestaurantService {
         return false;
     }
 
+    public boolean restaurantIsValid(Long Id){
+        if (restaurantRepository.findById(Id).isPresent()) {
+            boolean hasWon = restaurantRepository.findById(Id).get().getStatus().equals(WINNER);
+            return !hasWon;
+        }
+        return false;
+    }
+
     @Override
     public Optional<Restaurant> findById(Long Id) throws DataAccessException {
         return restaurantRepository.findById(Id);
@@ -90,7 +99,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Optional<Restaurant> canBeVotedNextDay(Long Id) {
         return restaurantRepository.findById(Id)
-                .filter(restaurant -> restaurant.getVotes() < 3)
+                .filter(restaurant -> restaurant.getStatus().equals(WINNER))
                 .map(restaurant -> {
                     restaurant.setStatus(VALID);
                     return restaurantRepository.save(restaurant);
@@ -106,6 +115,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Optional<Restaurant> voteForRestaurant(Long Id, String email) {
         return restaurantRepository.findById(Id)
                 .filter(restaurant -> this.userIsAllowedToVote(email))
+                .filter(restaurant -> this.restaurantIsValid(Id))
                 .map(restaurant -> {
                     restaurant.setVotes(restaurant.addVote(1));
                     this.userVoted(email);
@@ -118,7 +128,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantRepository.findAll()
                 .stream()
                 .filter(restaurant -> restaurant.getVotes().equals(this.findHighestVote()))
-                .map(restaurantRepository::save);
+                .map(restaurant -> {
+                        restaurant.setStatus(WINNER);
+                        return restaurantRepository.save(restaurant);
+        });
     }
 }
 
