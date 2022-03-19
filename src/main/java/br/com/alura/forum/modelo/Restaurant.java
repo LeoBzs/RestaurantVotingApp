@@ -1,6 +1,5 @@
 package br.com.alura.forum.modelo;
 
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,7 +7,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class Restaurant {
@@ -20,11 +18,8 @@ public class Restaurant {
     private String address;
     private String website;
     private Integer votes;
-    private LocalDateTime dataCriacao = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
     private StatusVote status = StatusVote.VALID;
-    @ManyToOne
-    private Usuario autor;
 
     public Restaurant() {
     }
@@ -84,14 +79,6 @@ public class Restaurant {
         this.description = description;
     }
 
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
     public StatusVote getStatus() {
         return status;
     }
@@ -116,14 +103,6 @@ public class Restaurant {
         this.website = website;
     }
 
-    public Usuario getAutor() {
-        return autor;
-    }
-
-    public void setAutor(Usuario autor) {
-        this.autor = autor;
-    }
-
     public Integer getVotes() {
         return votes;
     }
@@ -133,3 +112,24 @@ public class Restaurant {
     }
 }
 
+  /*
+    private LocalDateTime dataCriacao = LocalDateTime.now();
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+*/
+
+/*    @ManyToOne
+    private Usuario autor;
+    public Usuario getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Usuario autor) {
+        this.autor = autor;
+    }
+*/

@@ -48,9 +48,19 @@ public class RestaurantServiceImpl implements RestaurantService {
                 return Collections.max(votes);
     }
 
+    public boolean waitsUntilHalfHaveVoted() {
+        int totalVotes = this.usersWhoVotedList().size();
+        int totalUsers = usuarioRepository.findAll().size() - totalVotes;
+
+        return totalVotes >= totalUsers;
+    }
+
     @Override
     public Stream<Restaurant> topPicks(){
+
         int totalVotes = this.usersWhoVotedList().size();
+        int totalUsers = usuarioRepository.findAll().size();
+
         int average = totalVotes/2;
         return restaurantRepository.findAll()
                 .stream()
@@ -129,6 +139,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantRepository.findAll()
                 .stream()
                 .filter(restaurant -> restaurant.getVotes().equals(this.findHighestVote()))
+                .filter(usuario -> this.waitsUntilHalfHaveVoted())
                 .map(restaurant -> {
                         restaurant.setStatus(WINNER);
                         return restaurantRepository.save(restaurant);
