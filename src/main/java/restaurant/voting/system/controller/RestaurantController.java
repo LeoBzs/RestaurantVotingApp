@@ -52,23 +52,23 @@ public class RestaurantController {
 
     @PostMapping("/vote/{id}")
     public ResponseEntity<Optional<Restaurant>> voteForRestaurant(@PathVariable @Valid Long id, @RequestParam String email) {
-        return new ResponseEntity<>(restaurantService.voteForRestaurant(id, email), HttpStatus.OK);
+       if(restaurantService.findById(id).isPresent()) {
+           return new ResponseEntity<>(restaurantService.voteForRestaurant(id, email), HttpStatus.OK);
+       }
+       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/winner")
     public ResponseEntity<Stream<Restaurant>> winner() {
+        if(!restaurantService.waitsUntilHalfHaveVoted()){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<>(restaurantService.mostVoted(), HttpStatus.OK);
     }
 
     @GetMapping("/toppicks")
     public ResponseEntity<Stream<Restaurant>> topPicks() {
         return new ResponseEntity<>(restaurantService.topPicks(), HttpStatus.OK);
-    }
-
-    //  not working at all
-    @GetMapping("/voteabletomorrow/{id}")
-    public ResponseEntity<Optional<Restaurant>> canBeVoted(@PathVariable @Valid Long id){
-        return new ResponseEntity<>(restaurantService.canBeVotedNextDay(id), HttpStatus.OK);
     }
 
 }
