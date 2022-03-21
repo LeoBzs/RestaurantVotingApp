@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 @Configuration
 public class SwaggerConfiguration {
-
+//  Link http://localhost:8081/swagger-ui.html#/
     @Bean
     public Docket Api(){
         return new Docket(DocumentationType.SWAGGER_2)

@@ -1,6 +1,7 @@
 package restaurant.voting.system.controller;
 
 import restaurant.voting.system.modelo.Restaurant;
+import restaurant.voting.system.repository.UsuarioRepository;
 import restaurant.voting.system.service.RestaurantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,12 @@ import java.util.stream.Stream;
 public class RestaurantController {
 
     private final RestaurantServiceImpl restaurantService;
+    private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public RestaurantController(RestaurantServiceImpl restaurantService) {
+    public RestaurantController(RestaurantServiceImpl restaurantService, UsuarioRepository usuarioRepository) {
         this.restaurantService = restaurantService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
@@ -52,7 +55,7 @@ public class RestaurantController {
 
     @PostMapping("/vote/{id}")
     public ResponseEntity<Optional<Restaurant>> voteForRestaurant(@PathVariable @Valid Long id, @RequestParam String email) {
-       if(restaurantService.findById(id).isPresent()) {
+       if(restaurantService.findById(id).isPresent() && usuarioRepository.findByEmail(email).get().getVote().equals(1)) {
            return new ResponseEntity<>(restaurantService.voteForRestaurant(id, email), HttpStatus.OK);
        }
        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
