@@ -1,12 +1,8 @@
 package restaurant.voting.system.modelo;
 
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class Restaurant {
@@ -20,6 +16,8 @@ public class Restaurant {
     private Integer votes;
     @Enumerated(EnumType.STRING)
     private StatusVote status = StatusVote.VALID;
+    @Column(columnDefinition = "DATE")
+    private final LocalDate day = LocalDate.now();
 
     public Restaurant() {
     }
@@ -110,26 +108,10 @@ public class Restaurant {
     public void setVotes(Integer votes) {
         this.votes = votes;
     }
+
+    public LocalDate getDay() {
+        return day;
+    }
 }
 
-  /*
-    private LocalDateTime dataCriacao = LocalDateTime.now();
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
 
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-*/
-
-/*    @ManyToOne
-    private Usuario autor;
-    public Usuario getAutor() {
-        return autor;
-    }
-
-    public void setAutor(Usuario autor) {
-        this.autor = autor;
-    }
-*/

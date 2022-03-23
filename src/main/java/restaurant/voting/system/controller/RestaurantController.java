@@ -1,5 +1,6 @@
 package restaurant.voting.system.controller;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import restaurant.voting.system.modelo.Restaurant;
 import restaurant.voting.system.repository.UsuarioRepository;
 import restaurant.voting.system.service.RestaurantServiceImpl;
@@ -10,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -54,9 +56,9 @@ public class RestaurantController {
     }
 
     @PostMapping("/vote/{id}")
-    public ResponseEntity<Optional<Restaurant>> voteForRestaurant(@PathVariable @Valid Long id, @RequestParam String email) {
+    public ResponseEntity<Optional<Restaurant>> voteForRestaurant(@PathVariable @Valid Long id, @RequestParam String email, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
        if(restaurantService.findById(id).isPresent() && usuarioRepository.findByEmail(email).get().getVote().equals(1)) {
-           return new ResponseEntity<>(restaurantService.voteForRestaurant(id, email), HttpStatus.OK);
+           return new ResponseEntity<>(restaurantService.voteForRestaurant(id, email, date), HttpStatus.OK);
        }
        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

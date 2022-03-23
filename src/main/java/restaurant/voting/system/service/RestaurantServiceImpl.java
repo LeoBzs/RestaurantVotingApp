@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import restaurant.voting.system.modelo.StatusVote;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public void userVoted(String email) {
+    public void userVoted(String email, LocalDate date) {
         usuarioRepository.findByEmail(email)
+                .filter(usuario -> usuario.getDay().equals(date))
                 .map(usuario -> {
                     usuario.setVote(0);
                     usuario.setStatus(Usuario.StatusEnumVoter.ALREADY_VOTED);
@@ -120,13 +122,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Optional<Restaurant> voteForRestaurant(Long Id, String email) {
+    public Optional<Restaurant> voteForRestaurant(Long Id, String email, LocalDate date) {
         return restaurantRepository.findById(Id)
                 .filter(restaurant -> this.userIsAllowedToVote(email))
                 .filter(restaurant -> this.restaurantIsValid(Id))
                 .map(restaurant -> {
                     restaurant.setVotes(restaurant.addVote(1));
-                    this.userVoted(email);
+                    this.userVoted(email, date);
                     return restaurantRepository.save(restaurant);
                 });
     }

@@ -1,5 +1,6 @@
 package restaurant.voting.system.modelo;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +21,9 @@ public class Usuario implements UserDetails {
 	private String email;
 	private String senha;
 	private Integer vote;
-	
+	@Column(columnDefinition = "DATE")
+	private final LocalDate day = LocalDate.now();
+    // .getDayOfWeek().name()
 	@ManyToMany(fetch = FetchType.EAGER)
 	private final List<Perfil> perfis = new ArrayList<>();
 
@@ -99,6 +102,10 @@ public class Usuario implements UserDetails {
 
 	public void setStatus(StatusEnumVoter status) {
 		this.status = status;
+	}
+
+	public LocalDate getDay() {
+		return day;
 	}
 
 	@Override
